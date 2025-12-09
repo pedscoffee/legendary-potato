@@ -1,0 +1,30 @@
+{
+    "name": "PediTrack - Pediatric Symptom Tracker",
+    "short_name": "PediTrack",
+    "description": "Privacy-focused pediatric symptom tracker for documenting illness progression without collecting PHI",
+    "start_url": "/pwa/",
+    "display": "standalone",
+    "background_color": "#FAF7F2",
+    "theme_color": "#2D6A6A",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "health",
+        "medical",
+        "utilities"
+    ],
+    "screenshots": []
+}

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Privacy-focused pediatric symptom tracker for documenting illness progression">
+    <meta name="theme-color" content="#2D6A6A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="PediTrack">
+    
+    <title>PediTrack - Pediatric Symptom Tracker</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Medical Disclaimer Banner -->
+    <div class="disclaimer-banner">
+        <svg class="icon-small" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+        </svg>
+        <span>This app is for tracking purposes only and does not provide medical advice. Always consult healthcare providers for medical decisions.</span>
+    </div>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="app-title">PediTrack</h1>
+            <div class="child-selector-container" id="headerChildSelector"></div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <button class="nav-btn active" data-section="dashboard">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+            </svg>
+            <span>Dashboard</span>
+        </button>
+        <button class="nav-btn" data-section="log">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>Log Entry</span>
+        </button>
+        <button class="nav-btn" data-section="summary">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+            <span>Summary</span>
+        </button>
+        <button class="nav-btn" data-section="children">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+            </svg>
+            <span>Children</span>
+        </button>
+        <button class="nav-btn" data-section="settings">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>Settings</span>
+        </button>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section active">
+            <div class="welcome-message" id="welcomeMessage"></div>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h2 class="card-title">Current Episode</h2>
+                    <div id="currentEpisode"></div>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title">Recent Entries</h2>
+                    <div id="recentEntries"></div>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title">Temperature Trend</h2>
+                    <canvas id="tempChartSmall"></canvas>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title">Active Symptoms</h2>
+                    <div id="activeSymptoms"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Log Entry Section -->
+        <section id="log" class="content-section">
+            <div class="log-tabs">
+                <button class="tab-btn active" data-tab="symptoms">Symptoms</button>
+                <button class="tab-btn" data-tab="vitals">Vitals</button>
+                <button class="tab-btn" data-tab="interventions">Interventions</button>
+            </div>
+
+            <!-- Symptoms Tab -->
+            <div id="symptoms-tab" class="tab-content active">
+                <h2>Log Symptoms</h2>
+                
+                <div class="quick-entry-grid">
+                    <button class="quick-btn" data-symptom="fever">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
+                        </svg>
+                        Fever
+                    </button>
+                    <button class="quick-btn" data-symptom="cough">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                        </svg>
+                        Cough
+                    </button>
+                    <button class="quick-btn" data-symptom="runny-nose">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                        </svg>
+                        Runny Nose
+                    </button>
+                    <button class="quick-btn" data-symptom="congestion">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
+                        </svg>
+                        Congestion
+                    </button>
+                    <button class="quick-btn" data-symptom="vomiting">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 13.036h.008v.008H12v-.008z" />
+                        </svg>
+                        Vomiting
+                    </button>
+                    <button class="quick-btn" data-symptom="diarrhea">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
+                        </svg>
+                        Diarrhea
+                    </button>
+                    <button class="quick-btn" data-symptom="rash">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+                        </svg>
+                        Rash
+                    </button>
+                    <button class="quick-btn" data-symptom="ear-pain">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
+                        </svg>
+                        Ear Pain
+                    </button>
+                    <button class="quick-btn" data-symptom="sore-throat">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+                        </svg>
+                        Sore Throat
+                    </button>
+                    <button class="quick-btn" data-symptom="difficulty-breathing">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                        </svg>
+                        Difficulty Breathing
+                    </button>
+                    <button class="quick-btn" data-symptom="lethargy">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                        </svg>
+                        Lethargy
+                    </button>
+                    <button class="quick-btn" data-symptom="irritability">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 16.318A4.486 4.486 0 0012.016 15a4.486 4.486 0 00-3.198 1.318M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" />
+                        </svg>
+                        Irritability
+                    </button>
+                    <button class="quick-btn" data-symptom="loss-appetite">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                        </svg>
+                        Loss of Appetite
+                    </button>
+                </div>
+
+                <div class="symptom-form" id="symptomForm" style="display: none;">
+                    <h3 id="symptomFormTitle"></h3>
+                    
+                    <div class="form-group">
+                        <label>Severity</label>
+                        <div class="severity-buttons">
+                            <button type="button" class="severity-btn" data-severity="mild">Mild</button>
+                            <button type="button" class="severity-btn" data-severity="moderate">Moderate</button>
+                            <button type="button" class="severity-btn" data-severity="severe">Severe</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="symptomNotes">Notes (optional)</label>
+                        <textarea id="symptomNotes" rows="3" placeholder="Additional details..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="symptomTime">Time</label>
+                        <input type="datetime-local" id="symptomTime">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelSymptom">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="saveSymptom">Save Symptom</button>
+                    </div>
+                </div>
+
+                <div class="custom-symptom-section">
+                    <h3>Custom Symptom</h3>
+                    <div class="form-group">
+                        <input type="text" id="customSymptomName" placeholder="Enter symptom name...">
+                        <button class="btn btn-primary" id="addCustomSymptom">Add Custom</button>
+                    </div>
+                </div>
+
+                <div class="active-symptoms-list" id="activeSymptomsLog"></div>
+            </div>
+
+            <!-- Vitals Tab -->
+            <div id="vitals-tab" class="tab-content">
+                <h2>Log Vital Signs</h2>
+                
+                <!-- Temperature Section -->
+                <div class="vitals-section">
+                    <h3>Temperature</h3>
+                    <div class="temp-quick-btns">
+                        <button class="quick-temp-btn" data-temp="98.6">98.6°F</button>
+                        <button class="quick-temp-btn" data-temp="99.5">99.5°F</button>
+                        <button class="quick-temp-btn" data-temp="100.4">100.4°F</button>
+                        <button class="quick-temp-btn" data-temp="101.5">101.5°F</button>
+                        <button class="quick-temp-btn" data-temp="102.5">102.5°F+</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tempValue">Temperature</label>
+                        <div class="input-group">
+                            <input type="number" id="tempValue" step="0.1" placeholder="98.6">
+                            <button class="unit-toggle" id="tempUnit">°F</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tempMethod">Measurement Method</label>
+                        <select id="tempMethod">
+                            <option value="temporal">Temporal (Forehead)</option>
+                            <option value="oral">Oral</option>
+                            <option value="axillary">Axillary (Armpit)</option>
+                            <option value="rectal">Rectal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tempTime">Time</label>
+                        <input type="datetime-local" id="tempTime">
+                    </div>
+
+                    <button class="btn btn-primary" id="saveTemp">Save Temperature</button>
+                </div>
+
+                <!-- Breathing Section -->
+                <div class="vitals-section">
+                    <h3>Breathing</h3>
+                    <div class="form-group">
+                        <label>Difficulty Level</label>
+                        <div class="breathing-buttons">
+                            <button type="button" class="breathing-btn" data-level="normal">Normal</button>
+                            <button type="button" class="breathing-btn" data-level="slight">Slightly Labored</button>
+                            <button type="button" class="breathing-btn" data-level="labored">Labored</button>
+                            <button type="button" class="breathing-btn" data-level="severe">Severe</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="saveBreathing">Save Breathing Assessment</button>
+                </div>
+
+                <!-- Hydration Section -->
+                <div class="vitals-section">
+                    <h3>Hydration</h3>
+                    <div class="form-group">
+                        <label>Wet Diapers (last 24 hours)</label>
+                        <div class="counter">
+                            <button class="counter-btn" id="diaperMinus">−</button>
+                            <span class="counter-value" id="diaperCount">0</span>
+                            <button class="counter-btn" id="diaperPlus">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Fluid Intake</label>
+                        <div class="intake-buttons">
+                            <button type="button" class="intake-btn" data-intake="poor">Poor</button>
+                            <button type="button" class="intake-btn" data-intake="fair">Fair</button>
+                            <button type="button" class="intake-btn" data-intake="good">Good</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="saveHydration">Save Hydration</button>
+                </div>
+
+                <!-- Food Intake Section -->
+                <div class="vitals-section">
+                    <h3>Food Intake</h3>
+                    <div class="food-buttons">
+                        <button type="button" class="food-btn" data-food="normal">Eating Normally</button>
+                        <button type="button" class="food-btn" data-food="reduced">Reduced</button>
+                        <button type="button" class="food-btn" data-food="refusing">Refusing Food</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="foodNotes">Notes (optional)</label>
+                        <textarea id="foodNotes" rows="2"></textarea>
+                    </div>
+                    <button class="btn btn-primary" id="saveFood">Save Food Intake</button>
+                </div>
+
+                <!-- Sleep Section -->
+                <div class="vitals-section">
+                    <h3>Sleep</h3>
+                    <div class="form-group">
+                        <label for="sleepDuration">Duration (hours)</label>
+                        <input type="number" id="sleepDuration" min="0" max="24" step="0.5" placeholder="8">
+                    </div>
+                    <div class="form-group">
+                        <label>Quality</label>
+                        <div class="sleep-buttons">
+                            <button type="button" class="sleep-btn" data-quality="restful">Restful</button>
+                            <button type="button" class="sleep-btn" data-quality="restless">Restless</button>
+                            <button type="button" class="sleep-btn" data-quality="very-restless">Very Restless</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="saveSleep">Save Sleep</button>
+                </div>
+            </div>
+
+            <!-- Interventions Tab -->
+            <div id="interventions-tab" class="tab-content">
+                <h2>Log Interventions</h2>
+                
+                <!-- Medications Section -->
+                <div class="intervention-section">
+                    <h3>Medications</h3>
+                    <div class="medication-warning">
+                        <svg class="icon-small" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                        </svg>
+                        <span>Always follow your healthcare provider's dosing instructions</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medType">Medication Type</label>
+                        <select id="medType">
+                            <option value="">Select medication...</option>
+                            <option value="acetaminophen">Tylenol/Acetaminophen</option>
+                            <option value="ibuprofen">Motrin/Ibuprofen</option>
+                            <option value="antibiotic">Antibiotic</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="customMedGroup" style="display: none;">
+                        <label for="customMed">Medication Name</label>
+                        <input type="text" id="customMed" placeholder="Enter medication name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medDose">Dose (as prescribed)</label>
+                        <input type="text" id="medDose" placeholder="e.g., 5 mL, 1 tablet">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medTime">Time Given</label>
+                        <input type="datetime-local" id="medTime">
+                    </div>
+
+                    <div id="medTimingWarning" class="timing-warning" style="display: none;"></div>
+
+                    <button class="btn btn-primary" id="saveMed">Save Medication</button>
+                </div>
+
+                <!-- Treatments Section -->
+                <div class="intervention-section">
+                    <h3>Treatments</h3>
+                    <div class="treatment-grid">
+                        <button class="treatment-btn" data-treatment="nebulizer">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+                            </svg>
+                            Albuterol/Nebulizer
+                        </button>
+                        <button class="treatment-btn" data-treatment="suctioning">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                            </svg>
+                            Nasal Suctioning
+                        </button>
+                        <button class="treatment-btn" data-treatment="humidifier">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
+                            </svg>
+                            Humidifier
+                        </button>
+                        <button class="treatment-btn" data-treatment="cooling">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M ac M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                            </svg>
+                            Cooling Measures
+                        </button>
+                    </div>
+
+                    <div class="treatment-form" id="treatmentForm" style="display: none;">
+                        <h4 id="treatmentFormTitle"></h4>
+                        
+                        <div class="form-group">
+                            <label for="treatmentTime">Time</label>
+                            <input type="datetime-local" id="treatmentTime">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="treatmentNotes">Notes (optional)</label>
+                            <textarea id="treatmentNotes" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelTreatment">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="saveTreatment">Save Treatment</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Interventions -->
+                <div class="intervention-section">
+                    <h3>Recent Interventions</h3>
+                    <div id="recentInterventions"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section id="summary" class="content-section">
+            <h2>Medical Summary</h2>
+            <p class="summary-description">Auto-generated History of Present Illness (HPI) for healthcare providers</p>
+            
+            <div class="summary-actions">
+                <button class="btn btn-secondary" id="copySummary">
+                    <svg class="icon-small" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+                    </svg>
+                    Copy to Clipboard
+                </button>
+                <button class="btn btn-secondary" id="exportPDF">
+                    <svg class="icon-small" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12h9m-9-3h9m-9 6h9m-13.5-9L3 10.5m0 0L1.5 12M3 10.5v9" />
+                    </svg>
+                    Export PDF
+                </button>
+                <button class="btn btn-secondary" id="exportText">
+                    <svg class="icon-small" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    Export Text
+                </button>
+            </div>
+
+            <div class="summary-content card" id="summaryContent">
+                <p class="empty-state">No data to generate summary. Start logging symptoms and vitals to see your medical summary.</p>
+            </div>
+
+            <div class="timeline-section">
+                <h3>Timeline View</h3>
+                <div id="timelineView" class="timeline-container"></div>
+            </div>
+
+            <div class="charts-section">
+                <h3>Temperature Chart</h3>
+                <canvas id="tempChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Children Section -->
+        <section id="children" class="content-section">
+            <h2>Manage Children</h2>
+            
+            <button class="btn btn-primary btn-large" id="addChildBtn">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add Child
+            </button>
+
+            <div class="children-grid" id="childrenList"></div>
+
+            <!-- Add/Edit Child Modal -->
+            <div class="modal" id="childModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="childModalTitle">Add Child</h3>
+                        <button class="modal-close" id="closeChildModal">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="childName">Nickname (no real name required)</label>
+                            <input type="text" id="childName" placeholder="e.g., Kiddo, Little One">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Choose an Icon</label>
+                            <div class="icon-grid" id="iconGrid"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Icon Color</label>
+                            <div class="color-grid">
+                                <button class="color-btn" data-color="#2D6A6A" style="background: #2D6A6A"></button>
+                                <button class="color-btn" data-color="#C8763E" style="background: #C8763E"></button>
+                                <button class="color-btn" data-color="#B85C4A" style="background: #B85C4A"></button>
+                                <button class="color-btn" data-color="#6B635A" style="background: #6B635A"></button>
+                                <button class="color-btn" data-color="#8B4789" style="background: #8B4789"></button>
+                                <button class="color-btn" data-color="#2E7D6E" style="background: #2E7D6E"></button>
+                                <button class="color-btn" data-color="#D4A574" style="background: #D4A574"></button>
+                                <button class="color-btn" data-color="#4A7BA7" style="background: #4A7BA7"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" id="cancelChild">Cancel</button>
+                        <button class="btn btn-primary" id="saveChild">Save</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="content-section">
+            <h2>Settings</h2>
+            
+            <div class="card">
+                <h3>Episode Management</h3>
+                <button class="btn btn-secondary" id="archiveEpisode">Archive Current Episode</button>
+                <button class="btn btn-secondary" id="viewArchive">View Archived Episodes</button>
+            </div>
+
+            <div class="card">
+                <h3>Data Management</h3>
+                <p class="text-muted">All data is stored locally on this device only.</p>
+                <button class="btn btn-error" id="clearAllData">Clear All Data</button>
+            </div>
+
+            <div class="card">
+                <h3>About</h3>
+                <p><strong>PediTrack</strong> - Pediatric Symptom Tracker</p>
+                <p class="text-muted">Version 1.0</p>
+                <p class="text-muted">A privacy-focused tool for tracking pediatric symptoms. No PHI is collected.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/children.js"></script>
+    <script src="js/symptoms.js"></script>
+    <script src="js/vitals.js"></script>
+    <script src="js/interventions.js"></script>
+    <script src="js/summary.js"></script>
+    <script src="js/timeline.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            });
+        }
+    </script>
+</body>
+</html>
